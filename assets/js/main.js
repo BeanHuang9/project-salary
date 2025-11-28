@@ -2,7 +2,9 @@
    Google Sheet CSV URL（讀取）
 ============================ */
 const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSi55MdYM55CEQhERa70WFhFbbbz891wKRFMIrVKGvArsto-UUkJrUSK5aTE-7UZ8YRrTnz1lnYubsy/pub?output=csv';
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSi55MdYM55CEQhERa70WFhFbbbz891wKRFMIrVKGvArsto-UUkJrUSK5aTE-7UZ8YRrTnz1lnYubsy/pub?output=csv&t=' +
+  Date.now();
+
 
 /* ============================
    Google Apps Script API（新增）
