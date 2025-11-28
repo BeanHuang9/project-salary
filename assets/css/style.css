@@ -34,6 +34,35 @@ select {
   border: 1px solid #ccc;
 }
 
+
+/* ====== Loading ====== */
+.loading-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-box {
+  background: #fff;
+  padding: 18px 28px;
+  border-radius: 12px;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: .7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+
+
 /* ====== Summary ====== */
 .summary {
   display: flex;

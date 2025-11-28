@@ -181,6 +181,9 @@ function addNewData() {
     return;
   }
 
+  // 🔥 顯示 Loading
+  document.getElementById('loading').style.display = 'flex';
+
   fetch(API_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -188,6 +191,9 @@ function addNewData() {
     body: JSON.stringify({ date, project, total, income }),
   })
     .then(() => {
+      // 🔥 隱藏 Loading
+      document.getElementById('loading').style.display = 'none';
+
       alert('新增成功！（資料約 2～30 秒後同步）');
 
       dateInput.value = '';
@@ -195,10 +201,15 @@ function addNewData() {
       totalInput.value = '';
       incomeInput.value = '';
 
+      // 等待後重新整理資料
       setTimeout(loadSheet, 5000);
     })
-    .catch((err) => alert('連線錯誤：' + err));
+    .catch((err) => {
+      document.getElementById('loading').style.display = 'none';
+      alert('連線錯誤：' + err);
+    });
 }
+
 
 /* ============================
    小工具
