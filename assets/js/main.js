@@ -160,13 +160,13 @@ function renderCards(rows) {
 }
 
 /* ============================
-   前端新增資料 → 傳給 Google Apps Script
+   ★ 前端新增資料 → 傳給 Google Apps Script
 ============================ */
 function addNewData() {
-  const dateInput = document.getElementById('inputDate');
-  const projectInput = document.getElementById('inputProject');
-  const totalInput = document.getElementById('inputTotal');
-  const incomeInput = document.getElementById('inputIncome');
+  const dateInput = document.getElementById('fDate');
+  const projectInput = document.getElementById('fProject');
+  const totalInput = document.getElementById('fTotal');
+  const incomeInput = document.getElementById('fIncome');
 
   const date = dateInput.value;
   const project = projectInput.value;
@@ -185,20 +185,17 @@ function addNewData() {
     body: JSON.stringify({ date, project, total, income }),
   })
     .then(() => {
-      alert('新增成功！（no-cors 無法回傳狀態）');
+      alert('新增成功！（資料約 1 秒後同步）');
 
-      /* ⭐ 自動清空欄位（這三行最重要） */
       dateInput.value = '';
       projectInput.value = '';
       totalInput.value = '';
       incomeInput.value = '';
 
-      /* ⭐ 新增後重新載入資料 */
-      loadSheet();
+      setTimeout(loadSheet, 1200);
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
-
 
 /* ============================
    小工具
@@ -213,14 +210,10 @@ function formatMoney(num) {
 }
 
 /* ============================
-   Event
+   Event (搜尋 & 篩選)
 ============================ */
 document.getElementById('searchInput')?.addEventListener('input', render);
 document.getElementById('statusFilter')?.addEventListener('change', render);
-
-document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') render();
-});
 
 /* ============================
    啟動
