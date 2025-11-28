@@ -26,32 +26,6 @@ function getField(row, key) {
 }
 
 /* ============================
-   ⭐ 修復日期格式（統一 yyyy/mm/dd）
-============================ */
-function fixDate(v) {
-  if (!v) return v;
-
-  // 已經是 yyyy-mm-dd 或 yyyy/mm/dd
-  if (/^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(v)) {
-    return v.replace(/-/g, '/');
-  }
-
-  // Excel serial date (例 45992 或 45992.33)
-  const num = parseFloat(v);
-  if (!isNaN(num) && num > 30000 && num < 60000) {
-    const excelStart = new Date(1899, 11, 30);
-    const fixed = new Date(excelStart.getTime() + num * 86400000);
-
-    const y = fixed.getFullYear();
-    const m = String(fixed.getMonth() + 1).padStart(2, '0');
-    const d = String(fixed.getDate()).padStart(2, '0');
-    return `${y}/${m}/${d}`;
-  }
-
-  return v;
-}
-
-/* ============================
    讀取 Google Sheet
 ============================ */
 function loadSheet() {
@@ -137,11 +111,6 @@ function renderTable(rows) {
       let v = r[k] || '';
       const isNum = /^[\d,.\-]+$/.test(String(v).trim());
 
-      // ⭐ 日期統一格式
-      if (k.includes('日期')) {
-        v = fixDate(v);
-      }
-
       if (v === 'TRUE') {
         tbody += `<td><span class="icon-yes">✔</span></td>`;
       } else if (v === 'FALSE') {
@@ -181,7 +150,7 @@ function renderCards(rows) {
     html += `
       <div class="card">
         <div class="card-title">${getField(r, '專案')}</div>
-        <div class="card-row">📅 ${fixDate(getField(r, '日期'))}</div>
+        <div class="card-row">📅 ${getField(r, '日期')}</div>
         <div class="card-row">💰 實收：${getField(r, '實收')}</div>
         <div class="card-row">❗ 未收：${getField(r, '未收')}</div>
         <div class="card-row">📝 備註：${getField(r, '附註') || '—'}</div>
