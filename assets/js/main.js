@@ -14,18 +14,27 @@ function getField(row, key) {
   return found ? row[found] : '';
 }
 
-/* 載入 Sheet */
+/* ============================
+   載入 Sheet
+   ⭐ 移除最後一行（總覽）
+============================ */
 Papa.parse(CSV_URL, {
   download: true,
   header: true,
   skipEmptyLines: true,
   complete: function (res) {
-    allRows = res.data.reverse(); // ⭐ 新資料排上面
+    let raw = res.data;
+
+    raw.pop(); // ⭐ 移除最後一列（通常是總結或總覽）
+
+    allRows = raw.reverse(); // ⭐ 新增在最上面
     render();
   },
 });
 
-/* 主渲染流程 */
+/* ============================
+   主渲染流程
+============================ */
 function render() {
   const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
   const status = document.getElementById('statusFilter').value;
@@ -49,7 +58,9 @@ function render() {
   calcSummary(rows);
 }
 
-/* Summary 計算 */
+/* ============================
+   Summary 計算
+============================ */
 function calcSummary(rows) {
   let totalIncome = 0;
   let totalUnpaid = 0;
@@ -70,7 +81,9 @@ function calcSummary(rows) {
   document.getElementById('percentDone').innerText = percent;
 }
 
-/* 表格渲染 */
+/* ============================
+   表格渲染（含 ICON + 數字靠右 + 不換行）
+============================ */
 function renderTable(rows) {
   if (!rows.length) return;
 
@@ -113,7 +126,9 @@ function renderTable(rows) {
   document.getElementById('tableBody').innerHTML = tbody;
 }
 
-/* 手機卡片 */
+/* ============================
+   手機卡片
+============================ */
 function renderCards(rows) {
   if (window.innerWidth > 768) {
     document.getElementById('cardArea').style.display = 'none';
@@ -137,11 +152,14 @@ function renderCards(rows) {
   document.getElementById('cardArea').style.display = 'block';
 }
 
-/* 工具 */
+/* ============================
+   工具
+============================ */
 function parseMoney(str) {
   if (!str) return 0;
   return Number(String(str).replace(/[^\d.-]/g, '')) || 0;
 }
+
 function formatMoney(num) {
   return num.toLocaleString();
 }
