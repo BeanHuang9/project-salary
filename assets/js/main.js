@@ -85,10 +85,13 @@ function calcSummary(rows) {
 
   const percent =
     totalIncome + totalUnpaid === 0
-      ? '0%'
-      : Math.round((totalIncome / (totalIncome + totalUnpaid)) * 100) + '%';
+      ? 0
+      : Math.round((totalIncome / (totalIncome + totalUnpaid)) * 100);
 
-  document.getElementById('percentDone').innerText = percent;
+  document.getElementById('percentDoneText').innerText = percent + '%';
+  document.getElementById('percentDoneFill').style.width = percent + '%';
+
+  // document.getElementById('percentDone').innerText = percent;
 }
 
 /* ============================
