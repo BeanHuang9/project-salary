@@ -1,12 +1,20 @@
 /* ============================
-   Google Sheet CSV URL
+   Google Sheet CSV URL（讀取）
 ============================ */
 const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTocOfradY1JtUvkHjeq9B6lVTqTXPsRPGXBOvsfdwq_iVK6cu6LdZL8sxUfbzjdGevXAsS5YMpgAXZ/pub?output=csv';
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSi55MdYM55CEQhERa70WFhFbbbz891wKRFMIrVKGvArsto-UUkJrUSK5aTE-7UZ8YRrTnz1lnYubsy/pub?output=csv';
+
+/* ============================
+   Google Apps Script API（新增）
+============================ */
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbwq9XEfv0rUwhLZtFLIuG-8ySNFxev3MaBxse_dBxCOk5URZWsXA7PXUN7kbiMWkle6Gw/exec';
 
 let allRows = [];
 
-/* 找欄位工具 */
+/* ============================
+   欄位自動偵測工具
+============================ */
 function getField(row, key) {
   if (row[key] !== undefined) return row[key];
   const cleanKey = key.replace(/\s+/g, '');
@@ -15,29 +23,30 @@ function getField(row, key) {
 }
 
 /* ============================
-   載入 Sheet
-   ⭐ 移除最後一行（總覽）
+   讀取 Google Sheet
 ============================ */
-Papa.parse(CSV_URL, {
-  download: true,
-  header: true,
-  skipEmptyLines: true,
-  complete: function (res) {
-    let raw = res.data;
+function loadSheet() {
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function (res) {
+      let raw = res.data;
 
-    raw.pop(); // ⭐ 移除最後一列（通常是總結或總覽）
+      raw.pop(); // ⭐ 移除最後一行（總覽）
 
-    allRows = raw.reverse(); // ⭐ 新增在最上面
-    render();
-  },
-});
+      allRows = raw.reverse(); // ⭐ 新資料排上面
+      render();
+    },
+  });
+}
 
 /* ============================
    主渲染流程
 ============================ */
 function render() {
-  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-  const status = document.getElementById('statusFilter').value;
+  const keyword = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
+  const status = document.getElementById('statusFilter')?.value || 'all';
 
   let rows = allRows.filter((row) => {
     const text = JSON.stringify(row).toLowerCase();
@@ -82,7 +91,7 @@ function calcSummary(rows) {
 }
 
 /* ============================
-   表格渲染（含 ICON + 數字靠右 + 不換行）
+   表格渲染
 ============================ */
 function renderTable(rows) {
   if (!rows.length) return;
@@ -127,7 +136,7 @@ function renderTable(rows) {
 }
 
 /* ============================
-   手機卡片
+   手機卡片渲染
 ============================ */
 function renderCards(rows) {
   if (window.innerWidth > 768) {
@@ -153,7 +162,43 @@ function renderCards(rows) {
 }
 
 /* ============================
-   工具
+   前端新增資料 → 傳給 Google Apps Script
+============================ */
+function addNewData() {
+  const date = document.getElementById('inputDate').value;
+  const project = document.getElementById('inputProject').value;
+  const total = document.getElementById('inputTotal').value;
+  const income = document.getElementById('inputIncome').value;
+
+  if (!date || !project || !total || !income) {
+    alert('請完整填寫所有欄位');
+    return;
+  }
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      date,
+      project,
+      total,
+      income,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === 'success') {
+        alert('新增成功！');
+        loadSheet(); // ⭐ 新增後自動刷新
+      } else {
+        alert('新增失敗：' + data.message);
+      }
+    })
+    .catch((err) => alert('連線錯誤：' + err));
+}
+
+/* ============================
+   小工具
 ============================ */
 function parseMoney(str) {
   if (!str) return 0;
@@ -164,5 +209,13 @@ function formatMoney(num) {
   return num.toLocaleString();
 }
 
-document.getElementById('searchInput').addEventListener('input', render);
-document.getElementById('statusFilter').addEventListener('change', render);
+/* ============================
+   Event
+============================ */
+document.getElementById('searchInput')?.addEventListener('input', render);
+document.getElementById('statusFilter')?.addEventListener('change', render);
+
+/* ============================
+   啟動
+============================ */
+loadSheet();

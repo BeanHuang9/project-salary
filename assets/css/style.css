@@ -1,3 +1,4 @@
+
 /* ====== Layout ====== */
 body {
   margin: 0;
@@ -19,7 +20,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-input[type='text'] {
+input[type="text"], input[type="date"], input[type="number"] {
   flex: 1;
   padding: 10px 14px;
   border-radius: 8px;
@@ -45,7 +46,7 @@ select {
   background: white;
   padding: 18px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   flex: 1;
   min-width: 200px;
 }
@@ -62,16 +63,14 @@ select {
 }
 
 /* ==========================================================
-   ★★ 完美固定表頭不破版版本 ★★
-   —— 固定於表格上方，不會位移、左右滑也正常
+   ★★ 完美固定表頭不破版 ★★
 ========================================================== */
 .table-wrapper {
   overflow: auto;
-  max-height: 70vh; /* 可自行調整表格可視高度 */
+  max-height: 70vh;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  padding: 0; /* ⭐ 移除 padding，避免 sticky 位移 */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 table {
@@ -79,20 +78,20 @@ table {
   min-width: 1400px;
   border-collapse: separate;
   border-spacing: 0;
-  padding: 20px; /* ⭐ 將 padding 放到 table，讓 sticky th 不受影響 */
 }
 
 thead th {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #fff9dd;
+  background: #fff6cc;
   white-space: nowrap;
+  font-weight: bold;
+  padding: 12px;
 }
 
 /* ====== 表格一般樣式 ====== */
-th,
-td {
+th, td {
   border-bottom: 1px solid #eee;
   padding: 10px 12px;
   font-size: 14px;
@@ -116,30 +115,14 @@ td.project-name {
   font-size: 12px;
   color: #fff;
 }
-.tag-paid {
-  background: #0a8f35;
-}
-.tag-warn {
-  background: #d60000;
-}
+.tag-paid { background: #0a8f35; }
+.tag-warn { background: #d60000; }
 
 /* ====== ICON 樣式 ====== */
-.icon-yes {
-  color: #0a8f35;
-  font-size: 18px;
-}
-.icon-no {
-  color: #bbb;
-  font-size: 18px;
-}
-.icon-wait {
-  color: #ff4d00;
-  font-size: 20px;
-}
-.icon-issued {
-  color: #d4a200;
-  font-size: 22px;
-}
+.icon-yes { color: #0a8f35; font-size: 18px; }
+.icon-no { color: #bbb; font-size: 18px; }
+.icon-wait { color: #ff4d00; font-size: 20px; }
+.icon-issued { color: #d4a200; font-size: 22px; }
 
 /* ====== 數字靠右對齊 ====== */
 td.num-right {
@@ -161,7 +144,7 @@ td.num-right {
     padding: 16px;
     margin-bottom: 15px;
     border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
   }
   .card-title {
     font-size: 17px;
