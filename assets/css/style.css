@@ -30,6 +30,10 @@ h1 {
   object-fit: contain;
 }
 
+.brand-text{
+    text-align: center;
+}
+
 .brand-text .brand-title {
   font-size: 26px;
   font-weight: 700;
