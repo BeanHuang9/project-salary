@@ -120,6 +120,11 @@ tr:hover td {
   background: #fffff7;
 }
 
+/* 日期永不換行 */
+td.date-cell {
+  white-space: nowrap;
+}
+
 /* ====== 專案名稱永不換行 ====== */
 td.project-name {
   white-space: nowrap;
