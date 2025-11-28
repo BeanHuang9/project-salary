@@ -62,6 +62,23 @@ select {
   margin-top: 6px;
 }
 
+.add-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #333;
+}
+
+.add-btn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  background: #f7f7f7;
+}
+
+
 /* ==========================================================
    ★★ 完美固定表頭不破版 ★★
 ========================================================== */
