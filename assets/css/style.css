@@ -47,6 +47,37 @@ h1 {
 }
 
 
+.btn-area {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+/* 統一黃色按鈕樣式 */
+.btn-yellow {
+  display: inline-block;
+  background: #fff6cc;
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: 1px solid #e5d88f;
+  color: #775f00;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.btn-yellow:hover {
+  background: #ffef99;
+  border-color: #d6c667;
+}
+
+
+
+
 /* ====== 搜尋區 ====== */
 .search-bar {
   display: flex;

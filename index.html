@@ -34,7 +34,21 @@
     <input id="fIncome" type="number" placeholder="實收(扣勞健保)">
   </div>
 
-  <button onclick="addNewData()" class="add-btn">補充金庫 💰</button>
+
+  <div class="btn-area">
+
+    <button onclick="addNewData()" class="btn-yellow">補充金庫 💰</button>
+
+    <a href="https://docs.google.com/spreadsheets/d/1B2OZSuuJMvLET_FzdTUldTaHTPHEBmoqcR0_gbMNG2Y/edit?gid=0#gid=0"
+      target="_blank"
+      class="btn-yellow">
+      管理金庫 📝
+    </a>
+
+  </div>
+
+
+
 </div>
 
 <!-- 搜尋列 -->
@@ -60,21 +74,21 @@
 
   <!-- 未收任務 -->
   <div class="achievement-card">
-    <div class="ac-title">📦 未收任務</div>
+    <div class="ac-title">📦 金庫缺口</div>
     <div id="sumUnpaid" class="ac-value">—</div>
-    <div class="ac-sub">還在排隊的任務們</div>
+    <div class="ac-sub">排隊入庫中</div>
   </div>
 
   <!-- 完成率進度條 -->
   <div class="achievement-card">
-    <div class="ac-title">🎯 任務完成率</div>
+    <div class="ac-title">🎯 聚財率</div>
 
     <div class="progress-bar">
       <div id="percentDoneFill" class="progress-fill"></div>
     </div>
 
     <div id="percentDoneText" class="ac-progress-text">0%</div>
-    <div class="ac-sub">已完成的收款任務比例</div>
+    <div class="ac-sub">已完成的收款比例</div>
   </div>
 
 </div>
