@@ -1,155 +1,224 @@
-// ===================
-//  CSV 來源
-// ===================
+/* ============================
+   Google Sheet CSV URL（讀取）
+============================ */
 const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTocOfradY1JtUvkHjeq9B6lVTqTXPsRPGXBOvsfdwq_iVK6cu6LdZL8sxUfbzjdGevXAsS5YMpgAXZ/pub?output=csv&t=' +
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTocOfradY1JtUvkHjeq9B6lVTqTXPsRPGXBOvsfdwq_iVK6cu6LdZL8sxUfbzjdGevXAsS5YMpgAXZ/pub?output=csv&cb=' +
+  Math.random() +
+  '&t=' +
   Date.now();
 
-// ===================
-// 日期格式統一 yyyy/mm/dd
-// ===================
-function formatDate(value) {
-  if (!value) return '';
-  const d = new Date(value);
-  if (isNaN(d)) return value;
+/* ============================
+   Google Apps Script API（新增）
+============================ */
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbzobMqEeIkwcxvvqYHle8JghWmRjnnafCGpc44M1mCPxobWDbXJVucLCcyrnUwrDgiM4g/exec';
 
-  return (
-    d.getFullYear() +
-    '/' +
-    String(d.getMonth() + 1).padStart(2, '0') +
-    '/' +
-    String(d.getDate()).padStart(2, '0')
-  );
+let allRows = [];
+
+/* ============================
+   欄位自動偵測工具
+============================ */
+function getField(row, key) {
+  if (row[key] !== undefined) return row[key];
+  const cleanKey = key.replace(/\s+/g, '');
+  const found = Object.keys(row).find((k) => k.replace(/\s+/g, '').includes(cleanKey));
+  return found ? row[found] : '';
 }
 
-// ===================
-// 千分位
-// ===================
-function formatNumber(num) {
-  if (num === '' || num == null) return '';
-  const n = Number(String(num).replace(/[^0-9.-]/g, ''));
-  return isNaN(n) ? num : n.toLocaleString();
-}
-
-// ===================
-// 顏色標籤
-// ===================
-function tagColor(value) {
-  const num = Number(String(value).replace(/[^0-9.-]/g, ''));
-  if (isNaN(num)) return '';
-
-  if (num > 0) return `<span class="tag-green">NT$${formatNumber(num)}</span>`;
-  if (num < 0) return `<span class="tag-red">NT$${formatNumber(num)}</span>`;
-  return `<span class="tag-gray">NT$0</span>`;
-}
-
-// ===================
-// 渲染主表格
-// ===================
-function renderTable(data) {
-  const tbody = document.querySelector('#tableArea');
-  tbody.innerHTML = '';
-
-  data.forEach((row) => {
-    tbody.innerHTML += `
-      <tr>
-        <td class="date-cell">${formatDate(row['日期'])}</td>
-        <td>${row['專案名稱'] || ''}</td>
-        <td class="num-right">NT$${formatNumber(row['總費用(簽約)'])}</td>
-        <td class="num-right">NT$${formatNumber(row['實收(扣勞健保)'])}</td>
-        <td>${tagColor(row['未收款項'])}</td>
-        <td>${tagColor(row['已收款項'])}</td>
-        <td class="num-right">NT$${formatNumber(row['訂金'])}</td>
-        <td>${formatDate(row['訂金收款日期'])}</td>
-        <td>${row['待訂金'] ? '✔' : '✘'}</td>
-        <td>${row['第一期'] ? '✔' : '✘'}</td>
-        <td>${formatDate(row['第一期收款日期'])}</td>
-      </tr>
-    `;
+/* ============================
+   讀取 Google Sheet
+============================ */
+function loadSheet() {
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function (res) {
+      let raw = res.data;
+      raw.pop(); // 移除最後的小計列
+      allRows = raw.reverse(); // 新資料排最上面
+      render();
+    },
   });
 }
 
-// ===================
-// 更新 Summary 區塊
-// ===================
-function updateSummary(data) {
+/* ============================
+   主渲染流程
+============================ */
+function render() {
+  const keyword = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
+  const status = document.getElementById('statusFilter')?.value || 'all';
+
+  let rows = allRows.filter((row) => {
+    const text = JSON.stringify(row).toLowerCase();
+    if (!text.includes(keyword)) return false;
+
+    const unpaid = parseMoney(getField(row, '未收'));
+    const deposit = parseMoney(getField(row, '訂金'));
+
+    if (status === 'paid' && unpaid > 0) return false;
+    if (status === 'unpaid' && unpaid === 0) return false;
+    if (status === 'deposit' && deposit === 0) return false;
+
+    return true;
+  });
+
+  renderTable(rows);
+  renderCards(rows);
+  calcSummary(rows);
+}
+
+/* ============================
+   Summary 計算
+============================ */
+function calcSummary(rows) {
   let totalIncome = 0;
   let totalUnpaid = 0;
 
-  data.forEach((r) => {
-    const inc = Number(String(r['實收(扣勞健保)']).replace(/[^0-9.-]/g, '')) || 0;
-    const unp = Number(String(r['未收款項']).replace(/[^0-9.-]/g, '')) || 0;
-    totalIncome += inc;
-    totalUnpaid += unp;
+  rows.forEach((r) => {
+    totalIncome += parseMoney(getField(r, '實收'));
+    totalUnpaid += parseMoney(getField(r, '未收'));
   });
 
-  document.querySelector('#sumIncome').textContent = 'NT$ ' + formatNumber(totalIncome);
+  document.getElementById('sumIncome').innerText = 'NT$ ' + formatMoney(totalIncome);
+  document.getElementById('sumUnpaid').innerText = 'NT$ ' + formatMoney(totalUnpaid);
 
-  document.querySelector('#sumUnpaid').textContent = 'NT$ ' + formatNumber(totalUnpaid);
+  const percent =
+    totalIncome + totalUnpaid === 0
+      ? '0%'
+      : Math.round((totalIncome / (totalIncome + totalUnpaid)) * 100) + '%';
 
-  const total = totalIncome + totalUnpaid;
-  const rate = total ? Math.round((totalIncome / total) * 100) : 0;
-  document.querySelector('#sumRate').textContent = rate + '%';
+  document.getElementById('percentDone').innerText = percent;
 }
 
-// ===================
-// 載入 CSV
-// ===================
-async function loadCSV() {
-  try {
-    const response = await fetch(CSV_URL);
-    const text = await response.text();
-    const rows = Papa.parse(text, { header: true }).data;
-    const cleaned = rows.filter((r) => r['日期']); // 移除空行
+/* ============================
+   表格渲染
+============================ */
+function renderTable(rows) {
+  if (!rows.length) return;
 
-    window.projectData = cleaned;
+  const keys = Object.keys(rows[0]);
 
-    renderTable(cleaned);
-    updateSummary(cleaned);
-  } catch (err) {
-    console.error('讀取 CSV 失敗：', err);
-  }
+  document.getElementById('tableHead').innerHTML =
+    '<tr>' + keys.map((k) => `<th>${k}</th>`).join('') + '</tr>';
+
+  let tbody = '';
+
+  rows.forEach((r) => {
+    tbody += '<tr>';
+
+    keys.forEach((k) => {
+      let v = r[k] || '';
+      const isNum = /^[\d,.\-]+$/.test(String(v).trim());
+
+      if (v === 'TRUE') {
+        tbody += `<td><span class="icon-yes">✔</span></td>`;
+      } else if (v === 'FALSE') {
+        tbody += `<td><span class="icon-no">✖</span></td>`;
+      } else if (String(v).includes('待收')) {
+        tbody += `<td><span class="icon-wait">❗</span></td>`;
+      } else if (String(v).includes('已開立')) {
+        tbody += `<td><span class="icon-issued">💰</span></td>`;
+      } else if (k.includes('未收') && parseMoney(v) > 0) {
+        tbody += `<td><span class="tag tag-warn">${v}</span></td>`;
+      } else if (k.includes('已收') && parseMoney(v) > 0) {
+        tbody += `<td><span class="tag tag-paid">${v}</span></td>`;
+      } else if (k.includes('專案')) {
+        tbody += `<td class="project-name">${v}</td>`;
+      } else {
+        tbody += `<td class="${isNum ? 'num-right' : ''}">${v}</td>`;
+      }
+    });
+
+    tbody += '</tr>';
+  });
+
+  document.getElementById('tableBody').innerHTML = tbody;
 }
 
-// ===================
-// 新增資料 → Google Apps Script
-// ===================
-async function addNewData() {
-  const date = document.querySelector('#input-date').value;
-  const project = document.querySelector('#input-project').value;
-  const total = document.querySelector('#input-total').value;
-  const income = document.querySelector('#input-income').value;
-
-  if (!date || !project || !total || !income) {
-    alert('四個欄位都要填喔！');
+/* ============================
+   手機卡片渲染
+============================ */
+function renderCards(rows) {
+  if (window.innerWidth > 768) {
+    document.getElementById('cardArea').style.display = 'none';
     return;
   }
 
-  try {
-    const res = await fetch(
-      'https://script.google.com/macros/s/AKfycbwy_jd5jqVynet1oSbwb5xm52jPj9lC2btqwG8T2Lg8iLq85PpTs5nfZOEEL24CYFvQHw/exec',
-      {
-        method: 'POST',
-        body: JSON.stringify({ date, project, total, income }),
-      }
-    );
+  let html = '';
+  rows.forEach((r) => {
+    html += `
+      <div class="card">
+        <div class="card-title">${getField(r, '專案')}</div>
+        <div class="card-row">📅 ${getField(r, '日期')}</div>
+        <div class="card-row">💰 實收：${getField(r, '實收')}</div>
+        <div class="card-row">❗ 未收：${getField(r, '未收')}</div>
+        <div class="card-row">📝 備註：${getField(r, '附註') || '—'}</div>
+      </div>
+    `;
+  });
 
-    const result = await res.json();
-    if (result.status === 'success') {
-      alert('新增成功！');
-      loadCSV();
-    } else {
-      alert('新增失敗：' + result.message);
-    }
-  } catch (err) {
-    console.error(err);
-    alert('新增資料失敗，請稍後再試！');
-  }
+  document.getElementById('cardArea').innerHTML = html;
+  document.getElementById('cardArea').style.display = 'block';
 }
 
-// ===================
-// 初始化
-// ===================
-window.onload = () => {
-  loadCSV();
-};
+/* ============================
+   ★ 前端新增資料 → 傳給 Google Apps Script
+============================ */
+function addNewData() {
+  const dateInput = document.getElementById('fDate');
+  const projectInput = document.getElementById('fProject');
+  const totalInput = document.getElementById('fTotal');
+  const incomeInput = document.getElementById('fIncome');
+
+  const date = dateInput.value;
+  const project = projectInput.value;
+  const total = totalInput.value;
+  const income = incomeInput.value;
+
+  if (!date || !project || !total || !income) {
+    alert('請完整填寫所有欄位');
+    return;
+  }
+
+  fetch(API_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date, project, total, income }),
+  })
+    .then(() => {
+      alert('新增成功！（資料約 2～30 秒後同步）');
+
+      dateInput.value = '';
+      projectInput.value = '';
+      totalInput.value = '';
+      incomeInput.value = '';
+
+      setTimeout(loadSheet, 5000);
+    })
+    .catch((err) => alert('連線錯誤：' + err));
+}
+
+/* ============================
+   小工具
+============================ */
+function parseMoney(str) {
+  if (!str) return 0;
+  return Number(String(str).replace(/[^\d.-]/g, '')) || 0;
+}
+
+function formatMoney(num) {
+  return num.toLocaleString();
+}
+
+/* ============================
+   Event (搜尋 & 篩選)
+============================ */
+document.getElementById('searchInput')?.addEventListener('input', render);
+document.getElementById('statusFilter')?.addEventListener('change', render);
+
+/* ============================
+   啟動
+============================ */
+loadSheet();
