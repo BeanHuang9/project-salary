@@ -7,6 +7,7 @@ const CSV_URL =
   '&t=' +
   Date.now();
 
+
 /* ============================
    Google Apps Script API（新增）
 ============================ */
@@ -171,37 +172,33 @@ function addNewData() {
   const totalInput = document.getElementById('fTotal');
   const incomeInput = document.getElementById('fIncome');
 
-  let date = dateInput.value;
-  const project = projectInput.value.trim();
-  const total = totalInput.value.trim();
-  const income = incomeInput.value.trim();
+  const date = dateInput.value;
+  const project = projectInput.value;
+  const total = totalInput.value;
+  const income = incomeInput.value;
 
   if (!date || !project || !total || !income) {
     alert('請完整填寫所有欄位');
     return;
   }
 
-  // ⭐ 轉換日期格式 yyyy-mm-dd → yyyy/mm/dd
-  date = date.replace(/-/g, '/');
-
   fetch(API_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ date, project, total, income }),
   })
     .then(() => {
-      alert('新增成功！資料約 1 秒後出現在表格');
+      alert('新增成功！（資料約 1 秒後同步）');
 
       dateInput.value = '';
       projectInput.value = '';
       totalInput.value = '';
       incomeInput.value = '';
 
-      setTimeout(loadSheet, 1500);
+      setTimeout(loadSheet, 1200);
     })
-    .catch((err) => {
-      alert('連線錯誤：' + err);
-    });
+    .catch((err) => alert('連線錯誤：' + err));
 }
 
 /* ============================
