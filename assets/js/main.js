@@ -35,19 +35,8 @@ function loadSheet() {
     skipEmptyLines: true,
     complete: function (res) {
       let raw = res.data;
-
-      // ⭐ 自動把 11/28/2025 轉成 2025/11/28
-      raw = raw.map((r) => {
-        const d = r['日期'];
-        if (d && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(d)) {
-          const parts = d.split('/');
-          r['日期'] = `${parts[2]}/${parts[0].padStart(2, '0')}/${parts[1].padStart(2, '0')}`;
-        }
-        return r;
-      });
-
-      raw.pop();
-      allRows = raw.reverse();
+      raw.pop(); // 移除最後的小計列
+      allRows = raw.reverse(); // 新資料排最上面
       render();
     },
   });
