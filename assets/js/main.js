@@ -2,7 +2,7 @@
    Google Sheet CSV URL
 ============================ */
 const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSi55MdYM55CEQhERa70WFhFbbbz891wKRFMIrVKGvArsto-UUkJrUSK5aTE-7UZ8YRrTnz1lnYubsy/pub?output=csv';
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTocOfradY1JtUvkHjeq9B6lVTqTXPsRPGXBOvsfdwq_iVK6cu6LdZL8sxUfbzjdGevXAsS5YMpgAXZ/pub?output=csv';
 
 let allRows = [];
 
