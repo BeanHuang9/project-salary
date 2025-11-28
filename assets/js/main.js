@@ -8,11 +8,23 @@ const CSV_URL =
    Google Apps Script API（新增）
 ============================ */
 const API_URL =
-  'https://script.google.com/macros/s/AKfycbwy_jd5jqVynet1oSbwb5xm52jPj9lC2btqwG8T2Lg8iLq85PpTs5nfZOEEL24CYFvQHw/exec';
+  'https://script.google.com/macros/s/AKfycbwq9XEfv0rUwhLZtFLIuG-8ySNFxev3MaBxse_dBxCOk5URZWsXA7PXUN7kbiMWkle6Gw/exec';
 
 let allRows = [];
 
-/* 讀取 Google Sheet */
+/* ============================
+   欄位自動偵測工具
+============================ */
+function getField(row, key) {
+  if (row[key] !== undefined) return row[key];
+  const cleanKey = key.replace(/\s+/g, '');
+  const found = Object.keys(row).find((k) => k.replace(/\s+/g, '').includes(cleanKey));
+  return found ? row[found] : '';
+}
+
+/* ============================
+   讀取 Google Sheet
+============================ */
 function loadSheet() {
   Papa.parse(CSV_URL, {
     download: true,
@@ -27,7 +39,9 @@ function loadSheet() {
   });
 }
 
-/* 主渲染流程 */
+/* ============================
+   主渲染流程
+============================ */
 function render() {
   const keyword = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
   const status = document.getElementById('statusFilter')?.value || 'all';
@@ -36,8 +50,8 @@ function render() {
     const text = JSON.stringify(row).toLowerCase();
     if (!text.includes(keyword)) return false;
 
-    const unpaid = parseMoney(row['未收']);
-    const deposit = parseMoney(row['訂金']);
+    const unpaid = parseMoney(getField(row, '未收'));
+    const deposit = parseMoney(getField(row, '訂金'));
 
     if (status === 'paid' && unpaid > 0) return false;
     if (status === 'unpaid' && unpaid === 0) return false;
@@ -51,14 +65,16 @@ function render() {
   calcSummary(rows);
 }
 
-/* Summary */
+/* ============================
+   Summary 計算
+============================ */
 function calcSummary(rows) {
   let totalIncome = 0;
   let totalUnpaid = 0;
 
   rows.forEach((r) => {
-    totalIncome += parseMoney(r['實收']);
-    totalUnpaid += parseMoney(r['未收']);
+    totalIncome += parseMoney(getField(r, '實收'));
+    totalUnpaid += parseMoney(getField(r, '未收'));
   });
 
   document.getElementById('sumIncome').innerText = 'NT$ ' + formatMoney(totalIncome);
@@ -72,7 +88,9 @@ function calcSummary(rows) {
   document.getElementById('percentDone').innerText = percent;
 }
 
-/* 表格渲染 */
+/* ============================
+   表格渲染
+============================ */
 function renderTable(rows) {
   if (!rows.length) return;
 
@@ -90,7 +108,23 @@ function renderTable(rows) {
       let v = r[k] || '';
       const isNum = /^[\d,.\-]+$/.test(String(v).trim());
 
-      tbody += `<td class="${isNum ? 'num-right' : ''}">${v}</td>`;
+      if (v === 'TRUE') {
+        tbody += `<td><span class="icon-yes">✔</span></td>`;
+      } else if (v === 'FALSE') {
+        tbody += `<td><span class="icon-no">✖</span></td>`;
+      } else if (String(v).includes('待收')) {
+        tbody += `<td><span class="icon-wait">❗</span></td>`;
+      } else if (String(v).includes('已開立')) {
+        tbody += `<td><span class="icon-issued">💰</span></td>`;
+      } else if (k.includes('未收') && parseMoney(v) > 0) {
+        tbody += `<td><span class="tag tag-warn">${v}</span></td>`;
+      } else if (k.includes('已收') && parseMoney(v) > 0) {
+        tbody += `<td><span class="tag tag-paid">${v}</span></td>`;
+      } else if (k.includes('專案')) {
+        tbody += `<td class="project-name">${v}</td>`;
+      } else {
+        tbody += `<td class="${isNum ? 'num-right' : ''}">${v}</td>`;
+      }
     });
 
     tbody += '</tr>';
@@ -99,7 +133,9 @@ function renderTable(rows) {
   document.getElementById('tableBody').innerHTML = tbody;
 }
 
-/* 手機卡片渲染 */
+/* ============================
+   手機卡片渲染
+============================ */
 function renderCards(rows) {
   if (window.innerWidth > 768) {
     document.getElementById('cardArea').style.display = 'none';
@@ -110,11 +146,11 @@ function renderCards(rows) {
   rows.forEach((r) => {
     html += `
       <div class="card">
-        <div class="card-title">${r['專案']}</div>
-        <div class="card-row">📅 ${r['日期']}</div>
-        <div class="card-row">💰 實收：${r['實收']}</div>
-        <div class="card-row">❗ 未收：${r['未收']}</div>
-        <div class="card-row">📝 備註：${r['附註'] || '—'}</div>
+        <div class="card-title">${getField(r, '專案')}</div>
+        <div class="card-row">📅 ${getField(r, '日期')}</div>
+        <div class="card-row">💰 實收：${getField(r, '實收')}</div>
+        <div class="card-row">❗ 未收：${getField(r, '未收')}</div>
+        <div class="card-row">📝 備註：${getField(r, '附註') || '—'}</div>
       </div>
     `;
   });
@@ -123,12 +159,14 @@ function renderCards(rows) {
   document.getElementById('cardArea').style.display = 'block';
 }
 
-/* 新增資料 → 傳到 Google Sheet */
+/* ============================
+   前端新增資料 → 傳給 Google Apps Script
+============================ */
 function addNewData() {
-  const dateInput = document.getElementById('fDate');
-  const projectInput = document.getElementById('fProject');
-  const totalInput = document.getElementById('fTotal');
-  const incomeInput = document.getElementById('fIncome');
+  const dateInput = document.getElementById('inputDate');
+  const projectInput = document.getElementById('inputProject');
+  const totalInput = document.getElementById('inputTotal');
+  const incomeInput = document.getElementById('inputIncome');
 
   const date = dateInput.value;
   const project = projectInput.value;
@@ -147,19 +185,24 @@ function addNewData() {
     body: JSON.stringify({ date, project, total, income }),
   })
     .then(() => {
-      alert('新增成功！（Google Sheet 寫入需要 1~2 秒）');
+      alert('新增成功！（no-cors 無法回傳狀態）');
 
+      /* ⭐ 自動清空欄位（這三行最重要） */
       dateInput.value = '';
       projectInput.value = '';
       totalInput.value = '';
       incomeInput.value = '';
 
-      setTimeout(loadSheet, 1200); // 避免 Sheet 還沒更新
+      /* ⭐ 新增後重新載入資料 */
+      loadSheet();
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
 
-/* 小工具 */
+
+/* ============================
+   小工具
+============================ */
 function parseMoney(str) {
   if (!str) return 0;
   return Number(String(str).replace(/[^\d.-]/g, '')) || 0;
@@ -169,9 +212,17 @@ function formatMoney(num) {
   return num.toLocaleString();
 }
 
-/* Event */
+/* ============================
+   Event
+============================ */
 document.getElementById('searchInput')?.addEventListener('input', render);
 document.getElementById('statusFilter')?.addEventListener('change', render);
 
-/* 啟動 */
+document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') render();
+});
+
+/* ============================
+   啟動
+============================ */
 loadSheet();
