@@ -41,7 +41,36 @@
 </div>
 
 <!-- Summary -->
-<div class="summary">
+<div class="summary achievement-panel">
+
+  <!-- 進帳成就 -->
+  <div class="achievement-card">
+    <div class="ac-title">💰 進帳總成就</div>
+    <div id="sumIncome" class="ac-value">—</div>
+    <div class="ac-sub">累積全部已收款項</div>
+  </div>
+
+  <!-- 未收任務 -->
+  <div class="achievement-card">
+    <div class="ac-title">📦 未收任務</div>
+    <div id="sumUnpaid" class="ac-value">—</div>
+    <div class="ac-sub">還在排隊的任務們</div>
+  </div>
+
+  <!-- 完成率進度條 -->
+  <div class="achievement-card">
+    <div class="ac-title">🎯 任務完成率</div>
+
+    <div class="progress-bar">
+      <div id="percentDoneFill" class="progress-fill"></div>
+    </div>
+
+    <div id="percentDoneText" class="ac-progress-text">0%</div>
+    <div class="ac-sub">已完成的收款任務比例</div>
+  </div>
+
+</div>
+="summary">
   <div class="summary-item">
     <div class="summary-title">總收入（實收）</div>
     <div id="sumIncome" class="summary-value">—</div>
