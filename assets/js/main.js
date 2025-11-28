@@ -13,16 +13,6 @@ const API_URL =
 let allRows = [];
 
 /* ============================
-   欄位自動偵測工具
-============================ */
-function getField(row, key) {
-  if (row[key] !== undefined) return row[key];
-  const cleanKey = key.replace(/\s+/g, '');
-  const found = Object.keys(row).find((k) => k.replace(/\s+/g, '').includes(cleanKey));
-  return found ? row[found] : '';
-}
-
-/* ============================
    讀取 Google Sheet
 ============================ */
 function loadSheet() {
@@ -30,28 +20,28 @@ function loadSheet() {
     download: true,
     header: true,
     skipEmptyLines: true,
-    complete: function (res) {
+    complete: (res) => {
       let raw = res.data;
-      raw.pop(); // 移除最後的小計列
-      allRows = raw.reverse(); // 新資料排最上面
+      raw.pop(); // 刪掉最後小計列
+      allRows = raw.reverse();
       render();
     },
   });
 }
 
 /* ============================
-   主渲染流程
+   渲染流程
 ============================ */
 function render() {
-  const keyword = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
-  const status = document.getElementById('statusFilter')?.value || 'all';
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  const status = document.getElementById('statusFilter').value;
 
   let rows = allRows.filter((row) => {
     const text = JSON.stringify(row).toLowerCase();
     if (!text.includes(keyword)) return false;
 
-    const unpaid = parseMoney(getField(row, '未收'));
-    const deposit = parseMoney(getField(row, '訂金'));
+    const unpaid = parseMoney(row['未收'] || '');
+    const deposit = parseMoney(row['訂金'] || '');
 
     if (status === 'paid' && unpaid > 0) return false;
     if (status === 'unpaid' && unpaid === 0) return false;
@@ -66,101 +56,7 @@ function render() {
 }
 
 /* ============================
-   Summary 計算
-============================ */
-function calcSummary(rows) {
-  let totalIncome = 0;
-  let totalUnpaid = 0;
-
-  rows.forEach((r) => {
-    totalIncome += parseMoney(getField(r, '實收'));
-    totalUnpaid += parseMoney(getField(r, '未收'));
-  });
-
-  document.getElementById('sumIncome').innerText = 'NT$ ' + formatMoney(totalIncome);
-  document.getElementById('sumUnpaid').innerText = 'NT$ ' + formatMoney(totalUnpaid);
-
-  const percent =
-    totalIncome + totalUnpaid === 0
-      ? '0%'
-      : Math.round((totalIncome / (totalIncome + totalUnpaid)) * 100) + '%';
-
-  document.getElementById('percentDone').innerText = percent;
-}
-
-/* ============================
-   表格渲染
-============================ */
-function renderTable(rows) {
-  if (!rows.length) return;
-
-  const keys = Object.keys(rows[0]);
-
-  document.getElementById('tableHead').innerHTML =
-    '<tr>' + keys.map((k) => `<th>${k}</th>`).join('') + '</tr>';
-
-  let tbody = '';
-
-  rows.forEach((r) => {
-    tbody += '<tr>';
-
-    keys.forEach((k) => {
-      let v = r[k] || '';
-      const isNum = /^[\d,.\-]+$/.test(String(v).trim());
-
-      if (v === 'TRUE') {
-        tbody += `<td><span class="icon-yes">✔</span></td>`;
-      } else if (v === 'FALSE') {
-        tbody += `<td><span class="icon-no">✖</span></td>`;
-      } else if (String(v).includes('待收')) {
-        tbody += `<td><span class="icon-wait">❗</span></td>`;
-      } else if (String(v).includes('已開立')) {
-        tbody += `<td><span class="icon-issued">💰</span></td>`;
-      } else if (k.includes('未收') && parseMoney(v) > 0) {
-        tbody += `<td><span class="tag tag-warn">${v}</span></td>`;
-      } else if (k.includes('已收') && parseMoney(v) > 0) {
-        tbody += `<td><span class="tag tag-paid">${v}</span></td>`;
-      } else if (k.includes('專案')) {
-        tbody += `<td class="project-name">${v}</td>`;
-      } else {
-        tbody += `<td class="${isNum ? 'num-right' : ''}">${v}</td>`;
-      }
-    });
-
-    tbody += '</tr>';
-  });
-
-  document.getElementById('tableBody').innerHTML = tbody;
-}
-
-/* ============================
-   手機卡片渲染
-============================ */
-function renderCards(rows) {
-  if (window.innerWidth > 768) {
-    document.getElementById('cardArea').style.display = 'none';
-    return;
-  }
-
-  let html = '';
-  rows.forEach((r) => {
-    html += `
-      <div class="card">
-        <div class="card-title">${getField(r, '專案')}</div>
-        <div class="card-row">📅 ${getField(r, '日期')}</div>
-        <div class="card-row">💰 實收：${getField(r, '實收')}</div>
-        <div class="card-row">❗ 未收：${getField(r, '未收')}</div>
-        <div class="card-row">📝 備註：${getField(r, '附註') || '—'}</div>
-      </div>
-    `;
-  });
-
-  document.getElementById('cardArea').innerHTML = html;
-  document.getElementById('cardArea').style.display = 'block';
-}
-
-/* ============================
-   前端新增資料 → 傳給 Google Apps Script
+   新增資料（修正版）
 ============================ */
 function addNewData() {
   const date = document.getElementById('fDate').value;
@@ -175,26 +71,24 @@ function addNewData() {
 
   fetch(API_URL, {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ date, project, total, income }),
   })
-    .then(() => {
-      alert('新增成功！（no-cors 無法取得後端回應）');
+    .then((res) => res.json())
+    .then((data) => {
+      alert('新增成功！');
+      loadSheet();
 
-      // ⭐ 清空欄位
       document.getElementById('fDate').value = '';
       document.getElementById('fProject').value = '';
       document.getElementById('fTotal').value = '';
       document.getElementById('fIncome').value = '';
-
-      loadSheet(); // 重新渲染
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
 
 /* ============================
-   小工具
+   工具
 ============================ */
 function parseMoney(str) {
   if (!str) return 0;
@@ -205,17 +99,7 @@ function formatMoney(num) {
   return num.toLocaleString();
 }
 
-/* ============================
-   Event
-============================ */
-document.getElementById('searchInput')?.addEventListener('input', render);
-document.getElementById('statusFilter')?.addEventListener('change', render);
+document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('statusFilter').addEventListener('change', render);
 
-document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') render();
-});
-
-/* ============================
-   啟動
-============================ */
 loadSheet();
