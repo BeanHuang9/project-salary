@@ -2,11 +2,10 @@
    Google Sheet CSV URL（讀取）
 ============================ */
 const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSi55MdYM55CEQhERa70WFhFbbbz891wKRFMIrVKGvArsto-UUkJrUSK5aTE-7UZ8YRrTnz1lnYubsy/pub?output=csv&cb=' +
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTocOfradY1JtUvkHjeq9B6lVTqTXPsRPGXBOvsfdwq_iVK6cu6LdZL8sxUfbzjdGevXAsS5YMpgAXZ/pub?output=csv&cb=' +
   Math.random() +
   '&t=' +
   Date.now();
-
 
 /* ============================
    Google Apps Script API（新增）
@@ -189,14 +188,14 @@ function addNewData() {
     body: JSON.stringify({ date, project, total, income }),
   })
     .then(() => {
-      alert('新增成功！（資料約 1 秒後同步）');
+      alert('新增成功！（資料約 2～30 秒後同步）');
 
       dateInput.value = '';
       projectInput.value = '';
       totalInput.value = '';
       incomeInput.value = '';
 
-      setTimeout(loadSheet, 1200);
+      setTimeout(loadSheet, 5000);
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
