@@ -8,7 +8,7 @@ const CSV_URL =
    Google Apps Script API（新增）
 ============================ */
 const API_URL =
-  'https://script.google.com/macros/s/AKfycbwq9XEfv0rUwhLZtFLIuG-8ySNFxev3MaBxse_dBxCOk5URZWsXA7PXUN7kbiMWkle6Gw/exec';
+  'https://script.google.com/macros/s/AKfycbzobMqEeIkwcxvvqYHle8JghWmRjnnafCGpc44M1mCPxobWDbXJVucLCcyrnUwrDgiM4g/exec';
 
 let allRows = [];
 
