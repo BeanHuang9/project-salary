@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>專案薪酬 3.0</title>
+<title>🏆 收入成就系統</title>
 
 <!-- PapaParse：讀取 Google Sheet CSV -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -13,11 +13,11 @@
 
 <body>
 
-<h1>📘 專案薪酬 3.0</h1>
+<h1>🏆 收入成就系統</h1>
 
 <!-- 新增資料區 -->
 <div class="add-box">
-  <h3>➕ 新增專案資料</h3>
+  <h3>✨ 打開新的專案冒險</h3>
 
   <div class="add-row">
     <input id="fDate" type="date">
@@ -26,7 +26,7 @@
     <input id="fIncome" type="number" placeholder="實收(扣勞健保)">
   </div>
 
-  <button onclick="addNewData()" class="add-btn">新增資料</button>
+  <button onclick="addNewData()" class="add-btn">補充金庫 💰</button>
 </div>
 
 <!-- 搜尋列 -->
@@ -53,9 +53,13 @@
   </div>
 
   <div class="summary-item">
-    <div class="summary-title">收款完成率</div>
-    <div id="percentDone" class="summary-value">—</div>
+  <div class="summary-title">收款完成率</div>
+  <div id="percentDoneBar" class="progress-bar">
+      <div id="percentDoneFill" class="progress-fill"></div>
   </div>
+  <div id="percentDoneText" class="progress-text">0%</div>
+</div>
+
 </div>
 
 <!-- 表格 -->
