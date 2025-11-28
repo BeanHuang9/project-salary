@@ -8,7 +8,7 @@
 <!-- PapaParse 讀 Google Sheet CSV -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
 <body>
@@ -16,31 +16,17 @@
 <h1>📘 專案薪酬 3.0</h1>
 
 <!-- 新增資料區 -->
-<div style="
-  margin-bottom:20px;
-  padding:15px;
-  background:white;
-  border-radius:10px;
-  box-shadow:0 3px 12px rgba(0,0,0,0.06);">
-  <h3 style="margin-top:0;">➕ 新增專案資料</h3>
+<div class="add-box">
+  <h3>➕ 新增專案資料</h3>
 
-  <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <input id="inputDate" type="date">
-    <input id="inputProject" type="text" placeholder="專案名稱">
-    <input id="inputTotal" type="number" placeholder="總費用(簽約)">
-    <input id="inputIncome" type="number" placeholder="實收(扣勞健保)">
+  <div class="add-row">
+    <input id="fDate" type="date">
+    <input id="fProject" type="text" placeholder="專案名稱">
+    <input id="fTotal" type="number" placeholder="總費用(簽約)">
+    <input id="fIncome" type="number" placeholder="實收(扣勞健保)">
   </div>
 
-  <button onclick="addNewData()" style="
-    margin-top:12px;
-    padding:10px 18px;
-    border:0;
-    background:#5a7dff;
-    color:#fff;
-    border-radius:8px;
-    cursor:pointer;">
-    新增資料
-  </button>
+  <button onclick="addNewData()" class="add-btn">新增資料</button>
 </div>
 
 <!-- 搜尋列 -->

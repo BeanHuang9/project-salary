@@ -163,15 +163,10 @@ function renderCards(rows) {
    前端新增資料 → 傳給 Google Apps Script
 ============================ */
 function addNewData() {
-  const dateInput = document.getElementById('inputDate');
-  const projectInput = document.getElementById('inputProject');
-  const totalInput = document.getElementById('inputTotal');
-  const incomeInput = document.getElementById('inputIncome');
-
-  const date = dateInput.value;
-  const project = projectInput.value;
-  const total = totalInput.value;
-  const income = incomeInput.value;
+  const date = document.getElementById('fDate').value;
+  const project = document.getElementById('fProject').value;
+  const total = document.getElementById('fTotal').value;
+  const income = document.getElementById('fIncome').value;
 
   if (!date || !project || !total || !income) {
     alert('請完整填寫所有欄位');
@@ -185,20 +180,18 @@ function addNewData() {
     body: JSON.stringify({ date, project, total, income }),
   })
     .then(() => {
-      alert('新增成功！（no-cors 無法回傳狀態）');
+      alert('新增成功！（no-cors 無法取得後端回應）');
 
-      /* ⭐ 自動清空欄位（這三行最重要） */
-      dateInput.value = '';
-      projectInput.value = '';
-      totalInput.value = '';
-      incomeInput.value = '';
+      // ⭐ 清空欄位
+      document.getElementById('fDate').value = '';
+      document.getElementById('fProject').value = '';
+      document.getElementById('fTotal').value = '';
+      document.getElementById('fIncome').value = '';
 
-      /* ⭐ 新增後重新載入資料 */
-      loadSheet();
+      loadSheet(); // 重新渲染
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
-
 
 /* ============================
    小工具
