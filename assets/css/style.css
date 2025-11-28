@@ -1,0 +1,175 @@
+/* ====== Layout ====== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6fb;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+/* ====== 搜尋區 ====== */
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+input[type='text'] {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* ====== Summary ====== */
+.summary {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  min-width: 200px;
+}
+
+.summary-title {
+  color: #666;
+  font-size: 14px;
+}
+
+.summary-value {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+/* ==========================================================
+   ★★ 完美固定表頭不破版版本 ★★
+   —— 固定於表格上方，不會位移、左右滑也正常
+========================================================== */
+.table-wrapper {
+  overflow: auto;
+  max-height: 70vh; /* 可自行調整表格可視高度 */
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 0; /* ⭐ 移除 padding，避免 sticky 位移 */
+}
+
+table {
+  width: 100%;
+  min-width: 1400px;
+  border-collapse: separate;
+  border-spacing: 0;
+  padding: 20px; /* ⭐ 將 padding 放到 table，讓 sticky th 不受影響 */
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff9dd;
+  white-space: nowrap;
+}
+
+/* ====== 表格一般樣式 ====== */
+th,
+td {
+  border-bottom: 1px solid #eee;
+  padding: 10px 12px;
+  font-size: 14px;
+  text-align: left;
+}
+
+tr:hover td {
+  background: #fffff7;
+}
+
+/* ====== 專案名稱永不換行 ====== */
+td.project-name {
+  white-space: nowrap;
+}
+
+/* ====== TAG 樣式 ====== */
+.tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #fff;
+}
+.tag-paid {
+  background: #0a8f35;
+}
+.tag-warn {
+  background: #d60000;
+}
+
+/* ====== ICON 樣式 ====== */
+.icon-yes {
+  color: #0a8f35;
+  font-size: 18px;
+}
+.icon-no {
+  color: #bbb;
+  font-size: 18px;
+}
+.icon-wait {
+  color: #ff4d00;
+  font-size: 20px;
+}
+.icon-issued {
+  color: #d4a200;
+  font-size: 22px;
+}
+
+/* ====== 數字靠右對齊 ====== */
+td.num-right {
+  text-align: right !important;
+}
+
+/* ====== 手機卡片 ====== */
+#cardArea {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #cardArea {
+    margin-top: 1rem;
+  }
+
+  .card {
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .card-row {
+    font-size: 14px;
+    margin: 4px 0;
+  }
+}

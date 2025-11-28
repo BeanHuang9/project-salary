@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meg 專案薪酬 3.0</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+
+  <body>
+    <h1>📘 專案薪酬 3.0</h1>
+
+    <!-- 搜尋列 -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="搜尋專案名稱、付款方式、備註…" />
+      <select id="statusFilter">
+        <option value="all">所有狀態</option>
+        <option value="paid">已收清</option>
+        <option value="unpaid">有未收</option>
+        <option value="deposit">訂金已付</option>
+      </select>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="summary-item">
+        <div class="summary-title">總收入（實收）</div>
+        <div id="sumIncome" class="summary-value">—</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-title">總未收款</div>
+        <div id="sumUnpaid" class="summary-value">—</div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-title">收款完成率</div>
+        <div id="percentDone" class="summary-value">—</div>
+      </div>
+    </div>
+
+    <!-- 表格 -->
+    <div id="tableArea" class="table-wrapper">
+      <table>
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- 手機卡片 -->
+    <div id="cardArea"></div>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
