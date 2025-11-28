@@ -32,10 +32,8 @@ function loadSheet() {
     skipEmptyLines: true,
     complete: function (res) {
       let raw = res.data;
-
-      raw.pop(); // ⭐ 移除最後一行（總覽）
-
-      allRows = raw.reverse(); // ⭐ 新資料排上面
+      raw.pop(); // 移除最後的小計列
+      allRows = raw.reverse(); // 新資料排最上面
       render();
     },
   });
@@ -175,24 +173,16 @@ function addNewData() {
     return;
   }
 
+  // ⭐ no-cors 才能成功跨網域寫入 App Script
   fetch(API_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      date,
-      project,
-      total,
-      income,
-    }),
+    body: JSON.stringify({ date, project, total, income }),
   })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.status === 'success') {
-        alert('新增成功！');
-        loadSheet(); // ⭐ 新增後自動刷新
-      } else {
-        alert('新增失敗：' + data.message);
-      }
+    .then(() => {
+      alert('新增成功！（no-cors 無法回傳狀態）');
+      loadSheet();
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
@@ -214,6 +204,10 @@ function formatMoney(num) {
 ============================ */
 document.getElementById('searchInput')?.addEventListener('input', render);
 document.getElementById('statusFilter')?.addEventListener('change', render);
+
+document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') render();
+});
 
 /* ============================
    啟動
