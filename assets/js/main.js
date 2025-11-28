@@ -163,17 +163,21 @@ function renderCards(rows) {
    前端新增資料 → 傳給 Google Apps Script
 ============================ */
 function addNewData() {
-  const date = document.getElementById('inputDate').value;
-  const project = document.getElementById('inputProject').value;
-  const total = document.getElementById('inputTotal').value;
-  const income = document.getElementById('inputIncome').value;
+  const dateInput = document.getElementById('inputDate');
+  const projectInput = document.getElementById('inputProject');
+  const totalInput = document.getElementById('inputTotal');
+  const incomeInput = document.getElementById('inputIncome');
+
+  const date = dateInput.value;
+  const project = projectInput.value;
+  const total = totalInput.value;
+  const income = incomeInput.value;
 
   if (!date || !project || !total || !income) {
     alert('請完整填寫所有欄位');
     return;
   }
 
-  // ⭐ no-cors 才能成功跨網域寫入 App Script
   fetch(API_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -182,10 +186,19 @@ function addNewData() {
   })
     .then(() => {
       alert('新增成功！（no-cors 無法回傳狀態）');
+
+      /* ⭐ 自動清空欄位（這三行最重要） */
+      dateInput.value = '';
+      projectInput.value = '';
+      totalInput.value = '';
+      incomeInput.value = '';
+
+      /* ⭐ 新增後重新載入資料 */
       loadSheet();
     })
     .catch((err) => alert('連線錯誤：' + err));
 }
+
 
 /* ============================
    小工具
