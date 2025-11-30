@@ -1,119 +1,113 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>聚財金庫發發發</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>聚財金庫發發發</title>
 
-<!-- <link rel="icon" type="image/png" href="assets/img/favicon.ico" /> -->
-<link rel="icon" type="image/png" href="assets/img/icon.png">
-<link rel="apple-touch-icon" href="assets/img/icon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/img/icon.png">
+    <link rel="icon" type="image/png" href="assets/img/icon.png" />
+    <link rel="apple-touch-icon" href="assets/img/icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/icon.png" />
 
-<!-- PapaParse：讀取 Google Sheet CSV -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- PapaParse：讀取 Google Sheet CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-<link rel="stylesheet" href="assets/css/style.css" />
-</head>
+    <!-- Chart.js：用來畫每月薪資統計 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<body>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
 
-<div class="brand-box">
-  <img src="assets/img/gold_douzi.png" class="brand-icon" />
-  <div class="brand-text">
-    <div class="brand-title">聚財金庫發發發</div>
-    <div class="brand-sub">聚人氣 聚好運 把財富鎖進金庫</div>
-  </div>
-</div>
-
-
-<!-- 新增資料區 -->
-<div class="add-box">
-  <h3>✨ 開源節流</h3>
-
-  <div class="add-row">
-    <input id="fDate" type="date">
-    <input id="fProject" type="text" placeholder="專案名稱">
-    <input id="fTotal" type="number" placeholder="總費用(簽約)">
-    <input id="fIncome" type="number" placeholder="實收(扣勞健保)">
-  </div>
-
-
-  <div class="btn-area">
-
-    <button onclick="addNewData()" class="btn-yellow">補充金庫 💰</button>
-
-    <a href="https://docs.google.com/spreadsheets/d/1B2OZSuuJMvLET_FzdTUldTaHTPHEBmoqcR0_gbMNG2Y/edit?gid=0#gid=0"
-      target="_blank"
-      class="btn-yellow">
-      管理金庫 📝
-    </a>
-
-  </div>
-
-
-
-</div>
-
-<!-- 搜尋列 -->
-<div class="search-bar">
-  <input type="text" id="searchInput" placeholder="搜尋關鍵字…">
-  <select id="statusFilter">
-    <option value="all">所有狀態</option>
-    <option value="paid">已收清</option>
-    <option value="unpaid">有未收</option>
-    <option value="deposit">訂金已付</option>
-  </select>
-</div>
-
-<!-- Summary -->
-<div class="summary achievement-panel">
-
-  <!-- 進帳成就 -->
-  <div class="achievement-card">
-    <div class="ac-title">💰 進帳總成就</div>
-    <div id="sumIncome" class="ac-value">—</div>
-    <div class="ac-sub">累積全部已收款項</div>
-  </div>
-
-  <!-- 未收任務 -->
-  <div class="achievement-card">
-    <div class="ac-title">📦 金庫缺口</div>
-    <div id="sumUnpaid" class="ac-value">—</div>
-    <div class="ac-sub">排隊入庫中</div>
-  </div>
-
-  <!-- 完成率進度條 -->
-  <div class="achievement-card">
-    <div class="ac-title">🎯 聚財率</div>
-
-    <div class="progress-bar">
-      <div id="percentDoneFill" class="progress-fill"></div>
+  <body>
+    <div class="brand-box">
+      <img src="assets/img/gold_douzi.png" class="brand-icon" />
+      <div class="brand-text">
+        <div class="brand-title">聚財金庫發發發</div>
+        <div class="brand-sub">聚人氣 聚好運 把財富鎖進金庫</div>
+      </div>
     </div>
 
-    <div id="percentDoneText" class="ac-progress-text">0%</div>
-    <div class="ac-sub">已完成的收款比例</div>
-  </div>
+    <!-- 新增資料區 -->
+    <div class="add-box">
+      <h3>✨ 開源節流</h3>
 
-</div>
+      <div class="add-row">
+        <input id="fDate" type="date" />
+        <input id="fProject" type="text" placeholder="專案名稱" />
+        <input id="fTotal" type="number" placeholder="總費用(簽約)" />
+        <input id="fIncome" type="number" placeholder="實收(扣勞健保)" />
+      </div>
+
+      <div class="btn-area">
+        <button onclick="addNewData()" class="btn-yellow">補充金庫 💰</button>
+
+        <a href="https://docs.google.com/spreadsheets/d/1B2OZSuuJMvLET_FzdTUldTaHTPHEBmoqcR0_gbMNG2Y/edit?gid=0#gid=0" target="_blank" class="btn-yellow">
+          管理金庫 📝
+        </a>
+
+        <!-- 新增：顯示/隱藏月薪圖表 -->
+        <button onclick="toggleChart()" class="btn-yellow">每月薪資圖表 📊</button>
+      </div>
+    </div>
+
+    <!-- 📊 每月薪資圖表 -->
+    <div id="chartBox" class="chart-box" style="display: none">
+      <h3>📊 每月薪資圖表</h3>
+      <canvas id="monthlySalaryChart" height="120"></canvas>
+    </div>
+
+    <!-- 搜尋列 -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="搜尋關鍵字…" />
+      <select id="statusFilter">
+        <option value="all">所有狀態</option>
+        <option value="paid">已收清</option>
+        <option value="unpaid">有未收</option>
+        <option value="deposit">訂金已付</option>
+      </select>
+    </div>
 
 
-<!-- 表格 -->
-<div id="tableArea" class="table-wrapper">
-  <table>
-    <thead id="tableHead"></thead>
-    <tbody id="tableBody"></tbody>
-  </table>
-</div>
 
-<!-- 手機卡片 -->
-<div id="cardArea"></div>
+    <!-- Summary -->
+    <div class="summary achievement-panel">
+      <div class="achievement-card">
+        <div class="ac-title">💰 進帳總成就</div>
+        <div id="sumIncome" class="ac-value">—</div>
+        <div class="ac-sub">累積全部已收款項</div>
+      </div>
 
-<div id="loading" class="loading-backdrop" style="display:none;">
-  <div class="loading-box">豆子超慢跑搬資料中…</div>
-</div>
+      <div class="achievement-card">
+        <div class="ac-title">📦 金庫缺口</div>
+        <div id="sumUnpaid" class="ac-value">—</div>
+        <div class="ac-sub">排隊入庫中</div>
+      </div>
 
+      <div class="achievement-card">
+        <div class="ac-title">🎯 聚財率</div>
+        <div class="progress-bar">
+          <div id="percentDoneFill" class="progress-fill"></div>
+        </div>
+        <div id="percentDoneText" class="ac-progress-text">0%</div>
+        <div class="ac-sub">已完成的收款比例</div>
+      </div>
+    </div>
 
-<script src="assets/js/main.js"></script>
-</body>
+    <!-- 表格 -->
+    <div id="tableArea" class="table-wrapper">
+      <table>
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- 手機卡片 -->
+    <div id="cardArea"></div>
+
+    <div id="loading" class="loading-backdrop" style="display: none">
+      <div class="loading-box">豆子超慢跑搬資料中…</div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+  </body>
 </html>

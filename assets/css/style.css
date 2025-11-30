@@ -1,4 +1,3 @@
-
 /* ====== Layout ====== */
 body {
   margin: 0;
@@ -12,8 +11,6 @@ h1 {
   color: #333;
   margin-bottom: 25px;
 }
-
-
 
 /* ====== logo ====== */
 .brand-box {
@@ -30,39 +27,37 @@ h1 {
   object-fit: contain;
 }
 
-.brand-text{
-    text-align: center;
+.brand-text {
+  text-align: center;
 }
 
 .brand-text .brand-title {
   font-size: 30px;
   font-weight: 900;
-  color: #3B2A16;
+  color: #3b2a16;
 }
 
 .brand-text .brand-sub {
   font-size: 15px;
   margin-top: 4px;
-  color: #8E7A52;
+  color: #8e7a52;
 }
-
 
 .btn-area {
   display: flex;
   gap: 12px;
-  margin-bottom: 25px;
 }
 
 /* 統一黃色按鈕樣式 */
 .btn-yellow {
   display: inline-block;
   background: #fff6cc;
-  padding: 12px 22px;
+  padding: 12px 12px;
   border-radius: 12px;
   border: 1px solid #e5d88f;
   color: #775f00;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -75,8 +70,21 @@ h1 {
   border-color: #d6c667;
 }
 
+/* ====== 月薪圖表 ====== */
+.chart-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
 
-
+.chart-box h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
 
 /* ====== 搜尋區 ====== */
 .search-bar {
@@ -85,7 +93,9 @@ h1 {
   margin-bottom: 20px;
 }
 
-input[type="text"], input[type="date"], input[type="number"] {
+input[type='text'],
+input[type='date'],
+input[type='number'] {
   flex: 1;
   padding: 10px 14px;
   border-radius: 8px;
@@ -99,12 +109,11 @@ select {
   border: 1px solid #ccc;
 }
 
-
 /* ====== Loading ====== */
 .loading-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,17 +125,24 @@ select {
   padding: 18px 28px;
   border-radius: 12px;
   font-size: 18px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: pulse 1.2s infinite ease-in-out;
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: .7; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
-
-
 
 /* ====== Summary ====== */
 .summary {
@@ -140,7 +156,7 @@ select {
   background: white;
   padding: 18px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   flex: 1;
   min-width: 200px;
 }
@@ -161,7 +177,6 @@ select {
   background: #f7f8fc;
   padding: 20px 0;
   border-radius: 12px;
-  margin-bottom: 20px;
 }
 
 .add-box h3 {
@@ -207,15 +222,12 @@ select {
   border-color: #dccb6b;
 }
 
-
 /* RWD：手機版欄位佔滿整行 */
 @media (max-width: 768px) {
   .add-row input {
     flex: 100%;
   }
 }
-
-
 
 /* ===== 成就面板（Summary）====== */
 .achievement-panel {
@@ -230,7 +242,7 @@ select {
   background: white;
   padding: 24px 20px;
   border-radius: 18px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 
@@ -268,7 +280,7 @@ select {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #ffe27c, #ffcd44);
-  transition: width .4s ease;
+  transition: width 0.4s ease;
 }
 
 .ac-progress-text {
@@ -278,9 +290,6 @@ select {
   font-size: 16px;
 }
 
-
-
-
 /* ==========================================================
    ★★ 完美固定表頭不破版 ★★
 ========================================================== */
@@ -289,7 +298,7 @@ select {
   max-height: 70vh;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 table {
@@ -310,7 +319,8 @@ thead th {
 }
 
 /* ====== 表格一般樣式 ====== */
-th, td {
+th,
+td {
   border-bottom: 1px solid #eee;
   padding: 10px 12px;
   font-size: 14px;
@@ -339,14 +349,30 @@ td.project-name {
   font-size: 12px;
   color: #fff;
 }
-.tag-paid { background: #0a8f35; }
-.tag-warn { background: #d60000; }
+.tag-paid {
+  background: #0a8f35;
+}
+.tag-warn {
+  background: #d60000;
+}
 
 /* ====== ICON 樣式 ====== */
-.icon-yes { color: #0a8f35; font-size: 18px; }
-.icon-no { color: #bbb; font-size: 18px; }
-.icon-wait { color: #ff4d00; font-size: 20px; }
-.icon-issued { color: #d4a200; font-size: 22px; }
+.icon-yes {
+  color: #0a8f35;
+  font-size: 18px;
+}
+.icon-no {
+  color: #bbb;
+  font-size: 18px;
+}
+.icon-wait {
+  color: #ff4d00;
+  font-size: 20px;
+}
+.icon-issued {
+  color: #d4a200;
+  font-size: 22px;
+}
 
 /* ====== 數字靠右對齊 ====== */
 td.num-right {
@@ -368,7 +394,7 @@ td.num-right {
     padding: 16px;
     margin-bottom: 15px;
     border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   }
   .card-title {
     font-size: 17px;
@@ -378,5 +404,11 @@ td.num-right {
   .card-row {
     font-size: 14px;
     margin: 4px 0;
+  }
+
+  .btn-area {
+    display: flex;
+    justify-content: space-around;
+    gap: 12px;
   }
 }
