@@ -39,14 +39,20 @@
       </div>
 
       <div class="btn-area">
-        <button onclick="addNewData()" class="btn-yellow">補充金庫 💰</button>
+        <button type="button" class="btn-yellow" onclick="addNewData()">補充金庫 💰</button>
 
-        <a href="https://docs.google.com/spreadsheets/d/1B2OZSuuJMvLET_FzdTUldTaHTPHEBmoqcR0_gbMNG2Y/edit?gid=0#gid=0" target="_blank" class="btn-yellow">
+        <button
+          type="button"
+          class="btn-yellow"
+          onclick="window.open(
+      'https://docs.google.com/spreadsheets/d/1B2OZSuuJMvLET_FzdTUldTaHTPHEBmoqcR0_gbMNG2Y/edit?gid=0#gid=0',
+      '_blank'
+    )"
+        >
           管理金庫 📝
-        </a>
+        </button>
 
-        <!-- 新增：顯示/隱藏月薪圖表 -->
-        <button onclick="toggleChart()" class="btn-yellow">每月薪資圖表 📊</button>
+        <button type="button" class="btn-yellow" onclick="toggleChart()">每月薪資圖表 📊</button>
       </div>
     </div>
 
@@ -66,8 +72,6 @@
         <option value="deposit">訂金已付</option>
       </select>
     </div>
-
-
 
     <!-- Summary -->
     <div class="summary achievement-panel">
