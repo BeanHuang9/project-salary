@@ -409,10 +409,12 @@ td.num-right {
   .btn-area {
     display: flex;
     justify-content: space-around;
-    gap: 12px;
+    gap: 10px;
   }
 
   .btn-yellow {
-    padding: 12px 10px;        font-weight: 800;
+    padding: 12px 10px;
+    font-size: 14px;
+    font-weight: 800;
   }
 }
