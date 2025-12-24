@@ -411,4 +411,8 @@ td.num-right {
     justify-content: space-around;
     gap: 12px;
   }
+
+  .btn-yellow {
+    padding: 12px 10px;
+  }
 }
